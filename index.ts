@@ -89,6 +89,7 @@ function replyStickerMessage(event: any, packageId: number, stickerId: number){
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
+// dateの例'20191231'
 function getNumberOfSentReplyMessages(date: string){
   return client.getNumberOfSentReplyMessages(date).then((profile) => {
     console.log(profile);
@@ -155,6 +156,7 @@ function pushStickerMessage(user_or_group_or_room_id: string, packageId: number,
   return client.pushMessage(user_or_group_or_room_id, echoMessage);
 };
 
+// dateの例'20191231'
 function getNumberOfSentPushMessages(date: string){
   return client.getNumberOfSentPushMessages(date).then((profile) => {
     console.log(profile);
@@ -221,6 +223,7 @@ function multicastStickerMessage(user_id_array: string[], packageId: number, sti
   return client.multicast(user_id_array, echoMessage);
 };
 
+// dateの例'20191231'
 function getNumberOfSentMulticastMessages(date: string){
   return client.getNumberOfSentMulticastMessages(date).then((profile) => {
     console.log(profile);
@@ -248,13 +251,27 @@ function getProfile(user_id: string){
   });
 }
 
+
+
 // Group
 //userIdとサムネと名前を返す
 function getGroupMemberProfile(user_id: string){
-  return client.getGroupMemberProfile(group_id, user_id).then((profile) => {
+  return client.getGroupMemberProfile(user_id).then((profile) => {
     console.log(profile);
   })
 }
+
+function getGroupMemberIds(group_id: string){
+  client.getGroupMemberIds('group_id').then((ids) => {
+    ids.forEach((id) => console.log(id));
+  })
+}
+
+function leaveGroup(group_id: string){
+  client.leaveGroup('group_id')
+}
+
+//
 
 // サーバを起動する
 const port = process.env.PORT || 3000;
