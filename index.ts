@@ -14,11 +14,19 @@ app.post('/callback', line.middleware(config), (req, res) => {
   Promise.all(events.map((event) => {
     const imageUrl = "https://ellachanblog.com/wp-content/uploads/2019/04/blue-blue-sky-clear-sky-2086535-1024x668.jpg";
     const videoUrl = "https://ellachanblog.com/wp-content/uploads/2019/05/1535938239.mp4";
-    const audioUrl = "https://ellachanblog.com/wp-content/uploads/2019/05/ビヨォン.m4a";
+    const audioUrl = "https://ellachanblog.com/wp-content/uploads/2019/05/replyAudio.m4a";
     //ユーザーのfollow,unfollow,messageなどでイベントが発生
     console.log(event);
     if(event.type === 'message' && event.message.type==='text') {
       getProfile(event.source.userId);
+      if(event.source.type==='group'){
+        getGroupMemberProfile(process.env.GROUP_ID_1, process.env.USER_ID_1);
+        getGroupMemberIds(process.env.GROUP_ID_1);
+      }
+      if(event.source.type==='room'){
+        getRoomMemberProfile(process.env.ROOM_ID_1, process.env.USER_ID_2);
+        getRoomMemberIds(process.env.ROOM_ID_1);
+      }
       if(event.message.text==='replyText'){
         return replyTextMessage(event, "リプライテキスト").catch(() => { return null; });
       } else if (event.message.text==='replyImage'){
@@ -26,7 +34,8 @@ app.post('/callback', line.middleware(config), (req, res) => {
       } else if (event.message.text==='replyVideo'){
         return replyVideoMessage(event, videoUrl, videoUrl).catch(() => { return null; });
       } else if (event.message.text==='replyAudio'){
-        return replyAudioMessage(event, audioUrl, 2000).catch(() => { return null; });
+        return replyAudioMessage(event, audioUrl, 2000).catch((e) => { console.log(e);
+          return null; });
       } else if (event.message.text==='replyLocation'){
         return replyLocationMessage(event, "hoge", "〒150-0002 東京都渋谷区渋谷２丁目２１−１", 35.65910807942215, 139.70372892916203).catch(() => { return null; });
       } else if (event.message.text==='replySticker'){
@@ -48,19 +57,27 @@ app.post('/callback', line.middleware(config), (req, res) => {
       } else if (event.message.text==='getPushNum') {
         return getNumberOfSentPushMessages('20190501').catch(() => { return null; });
       } else if(event.message.text==='multicastText'){
-        return multicastTextMessage([process.env.USER_ID_1], "マルチテキスト").catch(() => { return null; });
+        return multicastTextMessage([process.env.USER_ID_1,process.env.USER_ID_2], "マルチテキスト").catch(() => { return null; });
       } else if (event.message.text==='multicastImage'){
-        return multicastImageMessage([process.env.USER_ID_1],imageUrl ,imageUrl).catch(() => { return null; });
+        return multicastImageMessage([process.env.USER_ID_1,process.env.USER_ID_2],imageUrl ,imageUrl).catch(() => { return null; });
       } else if (event.message.text==='multicastVideo'){
-        return multicastVideoMessage([process.env.USER_ID_1], videoUrl, videoUrl).catch(() => { return null; });
+        return multicastVideoMessage([process.env.USER_ID_1,process.env.USER_ID_2], videoUrl, videoUrl).catch(() => { return null; });
       } else if (event.message.text==='multicastAudio'){
-        return multicastAudioMessage([process.env.USER_ID_1], audioUrl, 2000).catch(() => { return null; });
+        return multicastAudioMessage([process.env.USER_ID_1,process.env.USER_ID_2], audioUrl, 2000).catch(() => { return null; });
       } else if (event.message.text==='multicastLocation'){
-        return multicastLocationMessage([process.env.USER_ID_1], "hoge", "〒150-0002 東京都渋谷区渋谷２丁目２１−１", 35.65910807942215, 139.70372892916203).catch(() => { return null; });
+        return multicastLocationMessage([process.env.USER_ID_1,process.env.USER_ID_2], "hoge", "〒150-0002 東京都渋谷区渋谷２丁目２１−１", 35.65910807942215, 139.70372892916203).catch(() => { return null; });
       } else if (event.message.text==='multicastSticker'){
-        return multicastStickerMessage([process.env.USER_ID_1], 1, 1).catch(() => { return null; });
+        return multicastStickerMessage([process.env.USER_ID_1,process.env.USER_ID_2], 1, 1).catch(() => { return null; });
       } else if (event.message.text==='getMulticastNum') {
         return getNumberOfSentMulticastMessages('20190501').catch(() => { return null; });
+      } else if(event.message.text==='pushTextToGroup'){
+        return pushTextMessage(process.env.GROUP_ID_1, "プッシュテキスト").catch(() => { return null; });
+      } else if(event.message.text==='pushTextToRoom'){
+        return pushTextMessage(process.env.ROOM_ID_1, "プッシュテキスト").catch(() => { return null; });
+      } else if(event.message.text==='byebyeGroup'){
+        leaveGroup(process.env.GROUP_ID_1);
+      } else if(event.message.text==='byebyeRoom'){
+        leaveRoom(process.env.ROOM_ID_1);
       }
     } else if (event.type === 'message' && event.message.type==='image'){
       getMessageContent(event.message.id);
