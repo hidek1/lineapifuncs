@@ -15,18 +15,50 @@ app.post('/callback', line.middleware(config), (req, res) => {
     const imageUrl = "https://ellachanblog.com/wp-content/uploads/2019/04/blue-blue-sky-clear-sky-2086535-1024x668.jpg";
     const videoUrl = "https://ellachanblog.com/wp-content/uploads/2019/05/1535938239.mp4";
     const audioUrl = "https://ellachanblog.com/wp-content/uploads/2019/05/replyAudio.m4a";
+    const quickreplyContent = {
+    items: [
+      {
+        type: "action",
+        imageUrl: imageUrl,
+        action: {
+          type: "message",
+          label: "Sushi",
+          text: "Sushi"
+        }
+      },
+      {
+        type: "action",
+        imageUrl: imageUrl,
+        action: {
+          type: "message",
+          label: "Tempura",
+          text: "Tempura"
+        }
+      },
+      {
+        type: "action",
+        action: {
+          type: "location",
+          label: "Send location"
+        }
+      }
+    ]
+  }
     //ユーザーのfollow,unfollow,messageなどでイベントが発生
     console.log(event);
     if(event.type === 'message' && event.message.type==='text') {
       getProfile(event.source.userId);
       if(event.source.type==='group'){
         getGroupMemberProfile(process.env.GROUP_ID_1, process.env.USER_ID_1);
+        // 認証済みアカウントまたはプレミアムアカウントのみで利用可能
         getGroupMemberIds(process.env.GROUP_ID_1);
       }
       if(event.source.type==='room'){
         getRoomMemberProfile(process.env.ROOM_ID_1, process.env.USER_ID_2);
+        // 認証済みアカウントまたはプレミアムアカウントのみで利用可能
         getRoomMemberIds(process.env.ROOM_ID_1);
       }
+      //挙動のテスト用
       if(event.message.text==='replyText'){
         return replyTextMessage(event, "リプライテキスト").catch(() => { return null; });
       } else if (event.message.text==='replyImage'){
@@ -78,6 +110,8 @@ app.post('/callback', line.middleware(config), (req, res) => {
         leaveGroup(process.env.GROUP_ID_1);
       } else if(event.message.text==='byebyeRoom'){
         leaveRoom(process.env.ROOM_ID_1);
+      } else if(event.message.text==='replyTextQuickReply'){
+        return replyTextMessage(event, "リプライテキスト",quickreplyContent).catch(() => { return null; });
       }
     } else if (event.type === 'message' && event.message.type==='image'){
       getMessageContent(event.message.id);
@@ -97,60 +131,79 @@ app.post('/callback', line.middleware(config), (req, res) => {
 
 // replyMessage
 // replyTokenは一定の期間が経過すると無効になるのでreplymessageは直後に送る用に使う
-function replyTextMessage(event: any, text: string){
-  const echoMessage = {
+function replyTextMessage(event: any, text: string, quickreply?:any){
+  var echoMessage = {
     type: 'text',
     text: text
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
+  console.log(echoMessage);
   return client.replyMessage(event.replyToken, echoMessage);
 }
 
 //jpgしか送れないです
-function replyImageMessage(event: any, originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function replyImageMessage(event: any, originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "image",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
-function replyVideoMessage(event: any, originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function replyVideoMessage(event: any, originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "video",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
-function replyAudioMessage(event: any, originalContentUrl: string, duration: number){
-  const echoMessage = {
+function replyAudioMessage(event: any, originalContentUrl: string, duration: number, quickreply?:any){
+  var echoMessage = {
     type: "audio",
     originalContentUrl: originalContentUrl,
     duration: duration
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
-function replyLocationMessage(event: any, title: string, address: string, latitude: number, longitude: number){
-  const echoMessage = {
+function replyLocationMessage(event: any, title: string, address: string, latitude: number, longitude: number, quickreply?:any){
+  var echoMessage = {
     type: "location",
     title: title,
     address: address,
     latitude: latitude,
     longitude: longitude
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
 // idについてはhttps://developers.line.biz/media/messaging-api/sticker_list.pdfを参照
-function replyStickerMessage(event: any, packageId: number, stickerId: number){
-  const echoMessage = {
+function replyStickerMessage(event: any, packageId: number, stickerId: number, quickreply?:any){
+  var echoMessage = {
     type: "sticker",
     packageId: packageId,
     stickerId: stickerId
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.replyMessage(event.replyToken, echoMessage);
 };
 
@@ -165,60 +218,78 @@ function getNumberOfSentReplyMessages(date: string){
 
 // pushMessage
 //任意のタイミングでメッセージが遅れるやつ
-function pushTextMessage(user_or_group_or_room_id : string, text :string){
-  const echoMessage = {
+function pushTextMessage(user_or_group_or_room_id : string, text :string, quickreply?:any){
+  var echoMessage = {
     type: 'text',
     text: text
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
 
 //jpgしか送れないです
-function pushImageMessage(user_or_group_or_room_id : string, originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function pushImageMessage(user_or_group_or_room_id : string, originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "image",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
 
-function pushVideoMessage(user_or_group_or_room_id : string, originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function pushVideoMessage(user_or_group_or_room_id : string, originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "video",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
 
-function pushAudioMessage(user_or_group_or_room_id : string, originalContentUrl: string, duration: number){
-  const echoMessage = {
+function pushAudioMessage(user_or_group_or_room_id : string, originalContentUrl: string, duration: number, quickreply?:any){
+  var echoMessage = {
     type: "audio",
     originalContentUrl: originalContentUrl,
     duration: duration
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
 
-function pushLocationMessage(user_or_group_or_room_id: string, title: string, address: string, latitude: number, longitude: number){
-  const echoMessage = {
+function pushLocationMessage(user_or_group_or_room_id: string, title: string, address: string, latitude: number, longitude: number, quickreply?:any){
+  var echoMessage = {
     type: "location",
     title: title,
     address: address,
     latitude: latitude,
     longitude: longitude
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id, echoMessage);
 };
 
 // idについてはhttps://developers.line.biz/media/messaging-api/sticker_list.pdfを参照
-function pushStickerMessage(user_or_group_or_room_id: string, packageId: number, stickerId: number){
-  const echoMessage = {
+function pushStickerMessage(user_or_group_or_room_id: string, packageId: number, stickerId: number, quickreply?:any){
+  var echoMessage = {
     type: "sticker",
     packageId: packageId,
     stickerId: stickerId
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.pushMessage(user_or_group_or_room_id, echoMessage);
 };
 
@@ -233,60 +304,78 @@ function getNumberOfSentPushMessages(date: string){
 
 // multicastMessage
 //任意のタイミングでメッセージが遅れるやつ(to 複数人)
-function multicastTextMessage(user_id_array: string[], text: string){
-  const echoMessage = {
+function multicastTextMessage(user_id_array: string[], text: string, quickreply?:any){
+  var echoMessage = {
     type: 'text',
     text: text
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array,echoMessage);
 }
 
 //jpgしか送れないです
-function multicastImageMessage(user_id_array: string[], originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function multicastImageMessage(user_id_array: string[], originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "image",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array,echoMessage);
 }
 
-function multicastVideoMessage(user_id_array: string[], originalContentUrl: string, previewImageUrl: string){
-  const echoMessage = {
+function multicastVideoMessage(user_id_array: string[], originalContentUrl: string, previewImageUrl: string, quickreply?:any){
+  var echoMessage = {
     type: "video",
     originalContentUrl: originalContentUrl,
     previewImageUrl: previewImageUrl
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array,echoMessage);
 }
 
-function multicastAudioMessage(user_id_array: string[], originalContentUrl: string, duration: number){
-  const echoMessage = {
+function multicastAudioMessage(user_id_array: string[], originalContentUrl: string, duration: number, quickreply?:any){
+  var echoMessage = {
     type: "audio",
     originalContentUrl: originalContentUrl,
     duration: duration
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array,echoMessage);
 }
 
-function multicastLocationMessage(user_id_array: string[], title: string, address: string, latitude: number, longitude: number){
-  const echoMessage = {
+function multicastLocationMessage(user_id_array: string[], title: string, address: string, latitude: number, longitude: number, quickreply?:any){
+  var echoMessage = {
     type: "location",
     title: title,
     address: address,
     latitude: latitude,
     longitude: longitude
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array, echoMessage);
 };
 
 // idについてはhttps://developers.line.biz/media/messaging-api/sticker_list.pdfを参照
-function multicastStickerMessage(user_id_array: string[], packageId: number, stickerId: number){
-  const echoMessage = {
+function multicastStickerMessage(user_id_array: string[], packageId: number, stickerId: number, quickreply?:any){
+  var echoMessage = {
     type: "sticker",
     packageId: packageId,
     stickerId: stickerId
   };
+  if(quickreply) {
+    echoMessage["quickreply"] = quickreply;
+  }
   return client.multicast(user_id_array, echoMessage);
 };
 
