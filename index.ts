@@ -255,23 +255,39 @@ function getProfile(user_id: string){
 
 // Group
 //userIdとサムネと名前を返す
-function getGroupMemberProfile(user_id: string){
-  return client.getGroupMemberProfile(user_id).then((profile) => {
+function getGroupMemberProfile(group_Id: string, user_id: string){
+  return client.getGroupMemberProfile(group_id, user_id).then((profile) => {
     console.log(profile);
   })
 }
 
 function getGroupMemberIds(group_id: string){
-  client.getGroupMemberIds('group_id').then((ids) => {
+  client.getGroupMemberIds(group_id).then((ids) => {
     ids.forEach((id) => console.log(id));
   })
 }
 
 function leaveGroup(group_id: string){
-  client.leaveGroup('group_id')
+  client.leaveGroup(group_id)
 }
 
-//
+//Room(複数人トーク)
+//userIdとサムネと名前を返す
+function getGroupMemberProfile(room_Id: string, user_id: string){
+  return client.getGroupMemberProfile(room_Id, user_id).then((profile) => {
+    console.log(profile);
+  })
+}
+
+function getGroupMemberIds(room_Id: string){
+  client.getGroupMemberIds(room_Id).then((ids) => {
+    ids.forEach((id) => console.log(id));
+  })
+}
+
+function leaveGroup(room_Id: string){
+  client.leaveGroup(room_Id)
+}
 
 // サーバを起動する
 const port = process.env.PORT || 3000;
