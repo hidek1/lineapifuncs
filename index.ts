@@ -255,7 +255,7 @@ function getProfile(user_id: string){
 
 // Group
 //userIdとサムネと名前を返す
-function getGroupMemberProfile(group_Id: string, user_id: string){
+function getGroupMemberProfile(group_id: string, user_id: string){
   return client.getGroupMemberProfile(group_id, user_id).then((profile) => {
     console.log(profile);
   })
@@ -273,20 +273,20 @@ function leaveGroup(group_id: string){
 
 //Room(複数人トーク)
 //userIdとサムネと名前を返す
-function getRoomMemberProfile(room_Id: string, user_id: string){
-  return client.getRoomMemberProfile(room_Id, user_id).then((profile) => {
+function getRoomMemberProfile(room_id: string, user_id: string){
+  return client.getRoomMemberProfile(room_id, user_id).then((profile) => {
     console.log(profile);
   })
 }
 
-function getRoomMemberIds(room_Id: string){
-  client.getRoomMemberIds(room_Id).then((ids) => {
+function getRoomMemberIds(room_id: string){
+  client.getRoomMemberIds(room_id).then((ids) => {
     ids.forEach((id) => console.log(id));
   })
 }
 
-function leaveRoom(room_Id: string){
-  client.leaveRoom(room_Id)
+function leaveRoom(room_id: string){
+  client.leaveRoom(room_id)
 }
 
 // サーバを起動する
