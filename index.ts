@@ -1,6 +1,8 @@
 require('dotenv').config();
 const line = require('@line/bot-sdk');
 const express = require('express');
+const request = require('request'); // yarn add request
+const imageUrl = 'http://liz-bluebird.com/img/character/natsuki.png';
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
@@ -42,6 +44,89 @@ app.post('/callback', line.middleware(config), (req, res) => {
           label: "Send location"
         }
       }
+    ]
+  };
+  const richMenu = {
+    "size":{
+        "width":2500,
+        "height":1686
+    },
+    "selected":false,
+    "name":"Controller",
+    "chatBarText":"Controller",
+    "areas":[
+        {
+          "bounds":{
+              "x":551,
+              "y":325,
+              "width":321,
+              "height":321
+          },
+          "action":{
+              "type":"message",
+              "text":"up"
+          }
+        },
+        {
+          "bounds":{
+              "x":876,
+              "y":651,
+              "width":321,
+              "height":321
+          },
+          "action":{
+              "type":"message",
+              "text":"right"
+          }
+        },
+        {
+          "bounds":{
+              "x":551,
+              "y":972,
+              "width":321,
+              "height":321
+          },
+          "action":{
+              "type":"message",
+              "text":"down"
+          }
+        },
+        {
+          "bounds":{
+              "x":225,
+              "y":651,
+              "width":321,
+              "height":321
+          },
+          "action":{
+              "type":"message",
+              "text":"left"
+          }
+        },
+        {
+          "bounds":{
+              "x":1433,
+              "y":657,
+              "width":367,
+              "height":367
+          },
+          "action":{
+              "type":"message",
+              "text":"btn b"
+          }
+        },
+        {
+          "bounds":{
+              "x":1907,
+              "y":657,
+              "width":367,
+              "height":367
+          },
+          "action":{
+              "type":"message",
+              "text":"btn a"
+          }
+        }
     ]
   }
     //ユーザーのfollow,unfollow,messageなどでイベントが発生
@@ -112,6 +197,20 @@ app.post('/callback', line.middleware(config), (req, res) => {
         leaveRoom(process.env.ROOM_ID_1);
       } else if(event.message.text==='replyTextQuickReply'){
         return replyTextMessage(event, "リプライテキスト",quickreplyContent).catch(() => { return null; });
+      } else if(event.message.text==='createRichMenu'){
+        return createRichMenu(richMenu);
+      } else if(event.message.text==='getRichMenu'){
+        return getRichMenu(process.env.RICH_MENU_ID_1);
+      } else if(event.message.text==='getRichMenuIdOfUser'){
+        return getRichMenuIdOfUser(process.env.USER_ID_1);
+      } else if(event.message.text==='setRichMenuImage'){
+        return setRichMenuImage(process.env.RICH_MENU_ID_1, imageUrl);
+      } else if(event.message.text==='linkRichMenuToUser'){
+        return linkRichMenuToUser(process.env.USER_ID_1, process.env.RICH_MENU_ID_1);
+      } else if(event.message.text==='getRichMenuList'){
+        return getRichMenuList();
+      } else if(event.message.text==='setDefaultRichMenu'){
+        return setDefaultRichMenu(process.env.RICH_MENU_ID_1);
       }
     } else if (event.type === 'message' && event.message.type==='image'){
       getMessageContent(event.message.id);
@@ -444,6 +543,60 @@ function getRoomMemberIds(room_id: string){
 
 function leaveRoom(room_id: string){
   client.leaveRoom(room_id)
+}
+
+
+//リッチメニュー
+function createRichMenu(rich_menu) {
+  client.createRichMenu(rich_menu).then(id => console.log(id));
+}
+
+function getRichMenu(rich_menu_id: string) {
+  client.getRichMenu(rich_menu_id).then(res => console.log(res));
+}
+
+function deleteRichMenu(rich_menu_id: string) {
+  client.deleteRichMenu(rich_menu_id);
+}
+
+function getRichMenuIdOfUser(user_id: string) {
+  client.getRichMenuIdOfUser(user_id).then(rich_menu_id => console.log(rich_menu_id));
+}
+
+function linkRichMenuToUser(user_id: string, rich_menu_id: string) {
+  client.linkRichMenuToUser(user_id, rich_menu_id);
+}
+
+function unlinkRichMenuFromUser(user_id: string) {
+  client.unlinkRichMenuFromUser(user_id);
+}
+
+//画像フォーマット：JPEGまたはPNG,画像サイズ：2500×1686または2500×843ピクセル
+async function setRichMenuImage(
+    rich_menu_id: string,
+    url: string,
+    content_type?: string,) {
+  const data = await getImg(url);
+  console.log(data);
+  return client.setRichMenuImage(rich_menu_id, data, content_type);
+}
+
+function getRichMenuList() {
+  client.getRichMenuList().then(richmenus => console.log(richmenus));
+}
+
+function setDefaultRichMenu(rich_menu_id: string) {
+  client.setDefaultRichMenu(rich_menu_id);
+}
+
+
+
+
+//urlの画像をbuffer化
+function getImg(url) {
+  request
+  .defaults({ encoding: null }) // encoding に null を指定すると、body として buffer が返される。
+  .get(url, (error,{ statusCode, headers }, body) => body);
 }
 
 // サーバを起動する
