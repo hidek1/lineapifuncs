@@ -1,7 +1,7 @@
 require('dotenv').config();
 const line = require('@line/bot-sdk');
 const express = require('express');
-const request = require('request'); // yarn add request
+const request = require('request'); 
 const imageUrl = 'http://liz-bluebird.com/img/character/natsuki.png';
 
 const config = {
@@ -204,7 +204,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
       } else if(event.message.text==='getRichMenuIdOfUser'){
         return getRichMenuIdOfUser(process.env.USER_ID_1);
       } else if(event.message.text==='setRichMenuImage'){
-        return setRichMenuImage(process.env.RICH_MENU_ID_1, imageUrl);
+        return setRichMenuImage(process.env.RICH_MENU_ID_1, "test111.png");
       } else if(event.message.text==='linkRichMenuToUser'){
         return linkRichMenuToUser(process.env.USER_ID_1, process.env.RICH_MENU_ID_1);
       } else if(event.message.text==='getRichMenuList'){
@@ -572,11 +572,11 @@ function unlinkRichMenuFromUser(user_id: string) {
 }
 
 //画像フォーマット：JPEGまたはPNG,画像サイズ：2500×1686または2500×843ピクセル
-async function setRichMenuImage(
+function setRichMenuImage(
     rich_menu_id: string,
-    url: string,
-    content_type?: string,) {
-  const data = await getImg(url);
+    path: string,
+    content_type?: string) {
+  const data = getImg(path);
   console.log(data);
   return client.setRichMenuImage(rich_menu_id, data, content_type);
 }
@@ -593,10 +593,16 @@ function setDefaultRichMenu(rich_menu_id: string) {
 
 
 //urlの画像をbuffer化
-function getImg(url) {
-  request
-  .defaults({ encoding: null }) // encoding に null を指定すると、body として buffer が返される。
-  .get(url, (error,{ statusCode, headers }, body) => body);
+function getImg(path) {
+  var fs = require('fs');
+  return fs.readFile( path, function( err, content ) {
+    if( err ) {
+      console.error(err);
+    }
+    else {
+      return content;
+    }
+  });
 }
 
 // サーバを起動する
