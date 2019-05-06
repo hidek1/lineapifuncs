@@ -236,7 +236,7 @@ function replyTextMessage(event: any, text: string, quickreply?:any){
     text: text
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   console.log(echoMessage);
   return client.replyMessage(event.replyToken, echoMessage);
@@ -250,7 +250,7 @@ function replyImageMessage(event: any, originalContentUrl: string, previewImageU
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.replyMessage(event.replyToken, echoMessage);
 };
@@ -262,7 +262,7 @@ function replyVideoMessage(event: any, originalContentUrl: string, previewImageU
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.replyMessage(event.replyToken, echoMessage);
 };
@@ -274,7 +274,7 @@ function replyAudioMessage(event: any, originalContentUrl: string, duration: num
     duration: duration
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.replyMessage(event.replyToken, echoMessage);
 };
@@ -288,7 +288,7 @@ function replyLocationMessage(event: any, title: string, address: string, latitu
     longitude: longitude
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.replyMessage(event.replyToken, echoMessage);
 };
@@ -301,7 +301,7 @@ function replyStickerMessage(event: any, packageId: number, stickerId: number, q
     stickerId: stickerId
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.replyMessage(event.replyToken, echoMessage);
 };
@@ -323,7 +323,7 @@ function pushTextMessage(user_or_group_or_room_id : string, text :string, quickr
     text: text
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
@@ -336,7 +336,7 @@ function pushImageMessage(user_or_group_or_room_id : string, originalContentUrl:
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
@@ -348,7 +348,7 @@ function pushVideoMessage(user_or_group_or_room_id : string, originalContentUrl:
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
@@ -360,7 +360,7 @@ function pushAudioMessage(user_or_group_or_room_id : string, originalContentUrl:
     duration: duration
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id,echoMessage);
 }
@@ -374,7 +374,7 @@ function pushLocationMessage(user_or_group_or_room_id: string, title: string, ad
     longitude: longitude
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id, echoMessage);
 };
@@ -387,7 +387,7 @@ function pushStickerMessage(user_or_group_or_room_id: string, packageId: number,
     stickerId: stickerId
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.pushMessage(user_or_group_or_room_id, echoMessage);
 };
@@ -409,7 +409,7 @@ function multicastTextMessage(user_id_array: string[], text: string, quickreply?
     text: text
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array,echoMessage);
 }
@@ -422,7 +422,7 @@ function multicastImageMessage(user_id_array: string[], originalContentUrl: stri
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array,echoMessage);
 }
@@ -434,7 +434,7 @@ function multicastVideoMessage(user_id_array: string[], originalContentUrl: stri
     previewImageUrl: previewImageUrl
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array,echoMessage);
 }
@@ -446,7 +446,7 @@ function multicastAudioMessage(user_id_array: string[], originalContentUrl: stri
     duration: duration
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array,echoMessage);
 }
@@ -460,7 +460,7 @@ function multicastLocationMessage(user_id_array: string[], title: string, addres
     longitude: longitude
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array, echoMessage);
 };
@@ -473,7 +473,7 @@ function multicastStickerMessage(user_id_array: string[], packageId: number, sti
     stickerId: stickerId
   };
   if(quickreply) {
-    echoMessage["quickreply"] = quickreply;
+    echoMessage["quickReply"] = quickreply;
   }
   return client.multicast(user_id_array, echoMessage);
 };
